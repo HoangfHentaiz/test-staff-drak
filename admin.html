@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Test Staff Drak</title>
+<style>
+body {
+  background:#000;color:#eee;font-family:"Poppins",sans-serif;
+  padding:20px;
+}
+.card {
+  background:#111;padding:20px;margin:20px 0;border-radius:10px;
+  box-shadow:0 0 15px rgba(128,0,255,0.4);
+}
+button,input {padding:10px;margin:10px;border:none;border-radius:8px;font-size:16px;}
+button {
+  background:linear-gradient(90deg,#9333ea,#3b82f6);
+  color:white;cursor:pointer;
+}
+</style>
+</head>
+<body>
+<h1>Admin Panel</h1>
+<input type="password" id="pass" placeholder="Nhập mật khẩu..." />
+<button id="loginBtn">Đăng nhập</button>
+<div id="content"></div>
+
+<script>
+const GITHUB_USER = "TênGitHubCủaBạn";
+const REPO_NAME = "test-staff-drak";
+const FILE_PATH = "submissions.json";
+
+document.getElementById("loginBtn").onclick = async () => {
+  const pass = document.getElementById("pass").value;
+  if (pass !== "Alpha12") return alert("Sai mật khẩu!");
+
+  const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${FILE_PATH}`);
+  const data = await res.json();
+  const container = document.getElementById("content");
+  container.innerHTML = "";
+
+  if (data.length === 0) {
+    container.innerHTML = "<p>Chưa có ai nộp bài!</p>";
+    return;
+  }
+
+  data.forEach(d => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `<h2>${d.name}</h2><p><b>Thời gian:</b> ${d.time}</p>`;
+    for (let i in d.answers) {
+      card.innerHTML += `<p><b>Câu ${i.replace('q','')}:</b> ${d.answers[i]}</p>`;
+    }
+    container.appendChild(card);
+  });
+};
+</script>
+</body>
+</html>

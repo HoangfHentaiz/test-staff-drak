@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Staff Drak</title>
+<style>
+body {
+  background: radial-gradient(circle at top left, #0a0a0a, #000);
+  color: #eee;
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 800px;
+  margin: 60px auto;
+  background: rgba(20,20,20,0.8);
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(128,0,255,0.4);
+  padding: 30px 40px;
+}
+h1 {
+  text-align: center;
+  color: #b388ff;
+  text-shadow: 0 0 15px #a855f7;
+}
+input, textarea, button {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0 20px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  outline: none;
+}
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  background: #111;
+  color: #fff;
+}
+input {
+  background: #111;
+  color: #fff;
+}
+button {
+  background: linear-gradient(90deg, #9333ea, #3b82f6);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover {
+  opacity: 0.8;
+  transform: scale(1.02);
+}
+label {
+  font-weight: 600;
+  color: #c4b5fd;
+}
+.success {
+  text-align: center;
+  font-size: 20px;
+  color: #a78bfa;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Test Staff Drak</h1>
+  <label>Nhập tên Discord:</label>
+  <input id="discord" placeholder="VD: hoangfnotbell" />
+  <div id="questions"></div>
+  <button id="submitBtn">Gửi bài</button>
+  <div id="msg" class="success"></div>
+</div>
+
+<script>
+const questions = [
+  "1. Lý do thật sự bạn muốn vào team?",
+  "2. Bạn mong muốn điều gì khi gia nhập team?",
+  "3. Bạn nghĩ mình có thể đóng góp gì cho team?",
+  "4. Bạn biết đến team bằng cách nào?",
+  "5. Vì sao bạn chọn team này thay vì team khác?",
+  "6. Bạn cảm thấy thế nào khi làm việc cùng các thành viên trong team?",
+  "7. Bạn đánh giá môi trường của team ra sao?",
+  "8. Điều gì bạn thích nhất ở team?",
+  "9. Điều gì bạn muốn thay đổi hoặc cải thiện?",
+  "10. Bạn có sẵn sàng gắn bó lâu dài với team không?"
+];
+
+const qContainer = document.getElementById("questions");
+questions.forEach((q, i) => {
+  qContainer.innerHTML += `
+    <label>${q}</label>
+    <textarea id="q${i+1}"></textarea>
+  `;
+});
+
+const submitBtn = document.getElementById("submitBtn");
+const msg = document.getElementById("msg");
+
+const GITHUB_USER = "TênGitHubCủaBạn"; // ví dụ: hoangfnotbell
+const REPO_NAME = "test-staff-drak";
+const FILE_PATH = "submissions.json";
+const TOKEN = "GH_TOKEN_CỦA_BẠN"; // ⚠️ Dán token vào đây
+
+submitBtn.onclick = async () => {
+  const discord = document.getElementById("discord").value.trim();
+  if (!discord) return alert("Nhập tên Discord!");
+
+  let answers = {};
+  for (let i = 1; i <= 10; i++) {
+    const ans = document.getElementById("q" + i).value.trim();
+    if (!ans) return alert("Trả lời đầy đủ tất cả câu hỏi!");
+    answers["q" + i] = ans;
+  }
+
+  const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${FILE_PATH}`);
+  const file = await res.json();
+  const content = atob(file.content);
+  let data = JSON.parse(content || "[]");
+
+  if (data.find(x => x.name === discord)) {
+    msg.textContent = "Bạn đã nộp bài rồi!";
+    return;
+  }
+
+  data.push({ name: discord, answers, time: new Date().toLocaleString("vi-VN") });
+  const updated = btoa(JSON.stringify(data, null, 2));
+
+  await fetch(`https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+    method: "PUT",
+    headers: {
+      "Authorization": `token ${TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: `Thêm bài nộp từ ${discord}`,
+      content: updated,
+      sha: file.sha
+    })
+  });
+
+  msg.textContent = "✅ Nộp bài thành công! Cảm ơn bạn đã hoàn thành bài test!";
+  submitBtn.disabled = true;
+};
+</script>
+</body>
+</html>
