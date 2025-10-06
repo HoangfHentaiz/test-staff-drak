@@ -3,106 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Drak Staff Test</title>
+  <title>Admin - Test Staff Drak</title>
   <style>
     body {
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(145deg, #000000, #0a0a0a);
+      background-color: #000;
       color: #fff;
+      font-family: "Poppins", sans-serif;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      padding: 40px;
-    }
-    h1 {
-      color: #00ffff;
-      margin-bottom: 20px;
-      text-shadow: 0 0 15px #00ffff88;
+      height: 100vh;
     }
     .container {
-      max-width: 800px;
-      width: 100%;
-      background: rgba(17, 17, 17, 0.9);
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 0 20px #00ffff44;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 30px;
+      border-radius: 15px;
+      width: 320px;
+      text-align: center;
+      backdrop-filter: blur(8px);
     }
     input {
-      padding: 10px;
-      border-radius: 5px;
-      border: none;
       width: 100%;
-      margin-top: 10px;
-      background: #111;
-      color: #fff;
+      padding: 10px;
+      border: none;
+      margin-top: 15px;
+      border-radius: 10px;
       outline: none;
     }
     button {
-      background: #00ffff;
-      color: #000;
-      border: none;
+      margin-top: 20px;
       padding: 10px 20px;
-      margin-top: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s;
-    }
-    button:hover {
-      background: #0ff9;
-    }
-    pre {
-      text-align: left;
-      background: #111;
-      padding: 15px;
+      border: none;
       border-radius: 10px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: #0ff;
+      cursor: pointer;
+      background: linear-gradient(90deg, #6a00ff, #b300ff);
+      color: white;
+      width: 100%;
+      font-weight: bold;
+    }
+    .results {
+      display: none;
+      margin-top: 20px;
+      text-align: left;
+    }
+    .entry {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 10px 0;
     }
   </style>
 </head>
 <body>
-  <h1>Drak Staff - Trang Admin</h1>
-  <div class="container" id="login">
-    <p>Nhập mật khẩu admin để xem kết quả:</p>
-    <input type="password" id="adminPass" placeholder="Nhập mật khẩu...">
-    <button onclick="checkLogin()">Đăng nhập</button>
-  </div>
-
-  <div class="container" id="resultContainer" style="display:none;">
-    <h2>Kết quả bài làm</h2>
-    <pre id="result">Đang tải dữ liệu...</pre>
+  <div class="container">
+    <h2>Đăng nhập Admin</h2>
+    <input type="password" id="password" placeholder="Nhập mật khẩu...">
+    <button onclick="login()">Đăng nhập</button>
+    
+    <div id="results" class="results">
+      <h3>Kết quả nộp bài:</h3>
+      <div id="entries"></div>
+    </div>
   </div>
 
   <script>
-    const ADMIN_PASSWORD = "Alpha12";
-    const GITHUB_REPO = "hoangfhentaiz/test-staff-drak";
-
-    async function checkLogin() {
-      const pass = document.getElementById("adminPass").value;
-      if (pass === ADMIN_PASSWORD) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("resultContainer").style.display = "block";
-        await loadResults();
+    function login() {
+      const pass = document.getElementById("password").value.trim();
+      if (pass === "Alpha12") {
+        document.querySelector("h2").textContent = "Xin chào Admin 👑";
+        document.querySelector("input").style.display = "none";
+        document.querySelector("button").style.display = "none";
+        document.getElementById("results").style.display = "block";
+        loadData();
       } else {
-        alert("❌ Sai mật khẩu admin!");
+        alert("Sai mật khẩu!");
       }
     }
 
-    async function loadResults() {
-      const url = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/submissions.json`;
-      try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Không tải được dữ liệu.");
-        const data = await res.json();
-        if (data.length === 0) {
-          document.getElementById("result").textContent = "📭 Chưa có ai nộp bài.";
-        } else {
-          document.getElementById("result").textContent = JSON.stringify(data, null, 2);
-        }
-      } catch (e) {
-        document.getElementById("result").textContent = "❌ Không thể tải submissions.json!";
+    async function loadData() {
+      const res = await fetch("https://raw.githubusercontent.com/hoangfhentaiz/test-staff-drak/main/submissions.json");
+      const data = await res.json();
+      const entries = document.getElementById("entries");
+      if (!data.length) {
+        entries.innerHTML = "<p>📭 Chưa có ai nộp bài.</p>";
+      } else {
+        entries.innerHTML = data.map(
+          (entry, i) => `
+            <div class="entry">
+              <strong>#${i + 1} ${entry.name || "Không rõ tên"}</strong>
+              <pre>${JSON.stringify(entry.answers, null, 2)}</pre>
+            </div>
+          `
+        ).join("");
       }
     }
   </script>
