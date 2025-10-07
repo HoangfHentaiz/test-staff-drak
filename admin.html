@@ -1,99 +1,129 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin - Test Staff Drak</title>
   <style>
     body {
-      background-color: #000;
-      color: #fff;
+      background-color: #0a0f17;
+      color: #e0f7fa;
       font-family: "Poppins", sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
-    .container {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 30px;
-      border-radius: 15px;
-      width: 320px;
+    .header {
       text-align: center;
-      backdrop-filter: blur(8px);
+      padding: 20px;
+      color: #38cfd2;
+      font-size: 1.8em;
+    }
+    .login-box, .results-box {
+      max-width: 800px;
+      background: #022833;
+      margin: 20px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 207, 215, 0.4);
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      color: #0a0f17;
+      font-size: 1em;
     }
     input {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      margin-top: 15px;
-      border-radius: 10px;
-      outline: none;
+      background: #a7fffe;
     }
     button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      background: linear-gradient(90deg, #6a00ff, #b300ff);
-      color: white;
-      width: 100%;
+      background: #38cfd2;
       font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
     }
-    .results {
-      display: none;
-      margin-top: 20px;
-      text-align: left;
+    button:hover {
+      background: #30b8ba;
+    }
+    .note {
+      text-align: center;
+      margin-top: 10px;
+      color: #82e9de;
     }
     .entry {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 10px 0;
+      background: #013642;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .entry h3 {
+      margin: 0;
+      color: #a7fffe;
+    }
+    .entry p {
+      margin: 8px 0;
+      color: #e0f7fa;
+    }
+    pre {
+      background: #022833;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+      color: #b2ebf2;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Đăng nhập Admin</h2>
-    <input type="password" id="password" placeholder="Nhập mật khẩu...">
+  <div class="header">Admin Panel - Test Staff Drak</div>
+  <div class="login-box" id="loginBox">
+    <p>Nhập mật khẩu để xem kết quả:</p>
+    <input type="password" id="adminPass" placeholder="Mật khẩu admin..." />
     <button onclick="login()">Đăng nhập</button>
-    
-    <div id="results" class="results">
-      <h3>Kết quả nộp bài:</h3>
-      <div id="entries"></div>
-    </div>
+    <div class="note">Mật khẩu là Alpha12</div>
+  </div>
+  <div class="results-box" id="resultsBox" style="display:none;">
+    <div id="entries"></div>
   </div>
 
   <script>
-    function login() {
-      const pass = document.getElementById("password").value.trim();
-      if (pass === "Alpha12") {
-        document.querySelector("h2").textContent = "Xin chào Admin 👑";
-        document.querySelector("input").style.display = "none";
-        document.querySelector("button").style.display = "none";
-        document.getElementById("results").style.display = "block";
-        loadData();
-      } else {
-        alert("Sai mật khẩu!");
+    const PASSWORD = "Alpha12";
+    const REPO = "hoangfhentaiz/test-staff-drak";
+    const FILE_PATH = "submissions.json";
+
+    async function login() {
+      const pass = document.getElementById("adminPass").value;
+      if (pass !== PASSWORD) {
+        alert("❌ Mật khẩu sai!");
+        return;
       }
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("resultsBox").style.display = "block";
+      await loadResults();
     }
 
-    async function loadData() {
-      const res = await fetch("https://raw.githubusercontent.com/hoangfhentaiz/test-staff-drak/main/submissions.json");
-      const data = await res.json();
-      const entries = document.getElementById("entries");
-      if (!data.length) {
-        entries.innerHTML = "<p>📭 Chưa có ai nộp bài.</p>";
-      } else {
-        entries.innerHTML = data.map(
-          (entry, i) => `
-            <div class="entry">
-              <strong>#${i + 1} ${entry.name || "Không rõ tên"}</strong>
-              <pre>${JSON.stringify(entry.answers, null, 2)}</pre>
-            </div>
-          `
-        ).join("");
+    async function loadResults() {
+      const url = `https://raw.githubusercontent.com/${REPO}/main/${FILE_PATH}`;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Không load được file JSON");
+        const data = await res.json();
+        const container = document.getElementById("entries");
+        if (!Array.isArray(data) || data.length === 0) {
+          container.innerHTML = `<p>📭 Chưa có bài nào được nộp.</p>`;
+          return;
+        }
+        container.innerHTML = data.map((d, i) => {
+          let html = `<div class="entry"><h3>#${i+1} ${d.name || "Không tên"}</h3>`;
+          html += `<p><b>Thời gian:</b> ${d.time}</p>`;
+          html += `<pre>${JSON.stringify(d.answers, null, 2)}</pre>`;
+          html += `</div>`;
+          return html;
+        }).join("");
+      } catch (e) {
+        document.getElementById("entries").innerText = "❌ Lỗi khi tải dữ liệu.";
       }
     }
   </script>
