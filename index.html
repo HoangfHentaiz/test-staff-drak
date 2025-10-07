@@ -1,151 +1,155 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test Staff Drak</title>
-<style>
-body {
-  background: radial-gradient(circle at top left, #0a0a0a, #000);
-  color: #eee;
-  font-family: "Poppins", sans-serif;
-  margin: 0;
-  padding: 0;
-}
-.container {
-  max-width: 800px;
-  margin: 60px auto;
-  background: rgba(20,20,20,0.8);
-  border-radius: 20px;
-  box-shadow: 0 0 40px rgba(128,0,255,0.4);
-  padding: 30px 40px;
-}
-h1 {
-  text-align: center;
-  color: #b388ff;
-  text-shadow: 0 0 15px #a855f7;
-}
-input, textarea, button {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0 20px;
-  border-radius: 10px;
-  border: none;
-  font-size: 16px;
-  outline: none;
-}
-textarea {
-  resize: vertical;
-  min-height: 80px;
-  background: #111;
-  color: #fff;
-}
-input {
-  background: #111;
-  color: #fff;
-}
-button {
-  background: linear-gradient(90deg, #9333ea, #3b82f6);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-button:hover {
-  opacity: 0.8;
-  transform: scale(1.02);
-}
-label {
-  font-weight: 600;
-  color: #c4b5fd;
-}
-.success {
-  text-align: center;
-  font-size: 20px;
-  color: #a78bfa;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài Test Lên Staff | Team Drak</title>
+  <style>
+    body {
+      background-color: #0b0b0b;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      padding: 30px 0;
+      background: linear-gradient(90deg, #111, #222, #111);
+      font-size: 2em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #111;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.05);
+    }
+    h2 {
+      text-align: center;
+      color: #0ff;
+      margin-bottom: 30px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    textarea, input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: #222;
+      color: #fff;
+      margin-bottom: 25px;
+      resize: vertical;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, #0ff, #09f);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: bold;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #09f, #0ff);
+      transform: scale(1.03);
+    }
+    .note {
+      text-align: center;
+      color: #aaa;
+      font-size: 0.9em;
+      margin-top: 15px;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <h1>Test Staff Drak</h1>
-  <label>Nhập tên Discord:</label>
-  <input id="discord" placeholder="VD: hoangfnotbell" />
-  <div id="questions"></div>
-  <button id="submitBtn">Gửi bài</button>
-  <div id="msg" class="success"></div>
-</div>
+  <header>Bài Test Staff | Team Drak</header>
 
-<script>
-const questions = [
-  "1. Lý do thật sự bạn muốn vào team?",
-  "2. Bạn mong muốn điều gì khi gia nhập team?",
-  "3. Bạn nghĩ mình có thể đóng góp gì cho team?",
-  "4. Bạn biết đến team bằng cách nào?",
-  "5. Vì sao bạn chọn team này thay vì team khác?",
-  "6. Bạn cảm thấy thế nào khi làm việc cùng các thành viên trong team?",
-  "7. Bạn đánh giá môi trường của team ra sao?",
-  "8. Điều gì bạn thích nhất ở team?",
-  "9. Điều gì bạn muốn thay đổi hoặc cải thiện?",
-  "10. Bạn có sẵn sàng gắn bó lâu dài với team không?"
-];
+  <div class="container">
+    <h2>Điền thông tin & trả lời các câu hỏi</h2>
 
-const qContainer = document.getElementById("questions");
-questions.forEach((q, i) => {
-  qContainer.innerHTML += `
-    <label>${q}</label>
-    <textarea id="q${i+1}"></textarea>
-  `;
-});
+    <label for="discordName">Tên Discord của bạn:</label>
+    <input type="text" id="discordName" placeholder="Ví dụ: huyhoangdy hoặc HoangfNotBell" required>
 
-const submitBtn = document.getElementById("submitBtn");
-const msg = document.getElementById("msg");
+    <h3>Phần 1: Lý do muốn vào team</h3>
 
-const GITHUB_USER = "TênGitHubCủaBạn"; // ví dụ: hoangfnotbell
-const REPO_NAME = "test-staff-drak";
-const FILE_PATH = "submissions.json";
-const TOKEN = "ghp_6zdL0c4gfRcIq08H2Nv02Uky8e0jY53KHH8a"; // ⚠️ Dán token vào đây
+    <label>Câu 1: Vì sao bạn muốn vào team Drak?</label>
+    <textarea id="q1" rows="3"></textarea>
 
-submitBtn.onclick = async () => {
-  const discord = document.getElementById("discord").value.trim();
-  if (!discord) return alert("Nhập tên Discord!");
+    <label>Câu 2: Bạn nghĩ mình có thể giúp gì cho team?</label>
+    <textarea id="q2" rows="3"></textarea>
 
-  let answers = {};
-  for (let i = 1; i <= 10; i++) {
-    const ans = document.getElementById("q" + i).value.trim();
-    if (!ans) return alert("Trả lời đầy đủ tất cả câu hỏi!");
-    answers["q" + i] = ans;
-  }
+    <label>Câu 3: Bạn biết đến team Drak bằng cách nào?</label>
+    <textarea id="q3" rows="3"></textarea>
 
-  const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${FILE_PATH}`);
-  const file = await res.json();
-  const content = atob(file.content);
-  let data = JSON.parse(content || "[]");
+    <label>Câu 4: Theo bạn, yếu tố quan trọng nhất để trở thành staff là gì?</label>
+    <textarea id="q4" rows="3"></textarea>
 
-  if (data.find(x => x.name === discord)) {
-    msg.textContent = "Bạn đã nộp bài rồi!";
-    return;
-  }
+    <label>Câu 5: Nếu được chọn, bạn sẽ làm gì đầu tiên để đóng góp cho team?</label>
+    <textarea id="q5" rows="3"></textarea>
 
-  data.push({ name: discord, answers, time: new Date().toLocaleString("vi-VN") });
-  const updated = btoa(JSON.stringify(data, null, 2));
+    <h3>Phần 2: Cảm nhận về team</h3>
 
-  await fetch(`https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-    method: "PUT",
-    headers: {
-      "Authorization": `token ${TOKEN}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      message: `Thêm bài nộp từ ${discord}`,
-      content: updated,
-      sha: file.sha
-    })
-  });
+    <label>Câu 6: Cảm nhận đầu tiên của bạn khi biết về team Drak?</label>
+    <textarea id="q6" rows="3"></textarea>
 
-  msg.textContent = "✅ Nộp bài thành công! Cảm ơn bạn đã hoàn thành bài test!";
-  submitBtn.disabled = true;
-};
-</script>
+    <label>Câu 7: Bạn nghĩ điều gì khiến team Drak khác biệt?</label>
+    <textarea id="q7" rows="3"></textarea>
+
+    <label>Câu 8: Bạn đánh giá tinh thần teamwork của team Drak như thế nào?</label>
+    <textarea id="q8" rows="3"></textarea>
+
+    <label>Câu 9: Bạn mong muốn học hỏi điều gì khi tham gia team?</label>
+    <textarea id="q9" rows="3"></textarea>
+
+    <label>Câu 10: Hãy nói một điều bạn yêu thích nhất về team Drak.</label>
+    <textarea id="q10" rows="3"></textarea>
+
+    <button onclick="submitForm()">Nộp bài</button>
+    <div class="note">⚠️ Mỗi người chỉ được nộp 1 lần duy nhất!</div>
+  </div>
+
+  <script>
+    function submitForm() {
+      const discordName = document.getElementById('discordName').value.trim();
+      if (!discordName) {
+        alert("Vui lòng nhập tên Discord!");
+        return;
+      }
+
+      // Kiểm tra xem đã làm bài chưa
+      if (localStorage.getItem('staffTestDone')) {
+        alert("Bạn đã nộp bài rồi, không thể nộp lại!");
+        return;
+      }
+
+      const answers = {};
+      for (let i = 1; i <= 10; i++) {
+        answers[`q${i}`] = document.getElementById(`q${i}`).value.trim();
+      }
+
+      const result = {
+        discord: discordName,
+        answers: answers,
+        time: new Date().toLocaleString()
+      };
+
+      // Lưu vào localStorage
+      localStorage.setItem('staffTestDone', 'true');
+      localStorage.setItem(`result_${discordName}`, JSON.stringify(result));
+
+      alert("✅ Bài làm của bạn đã được nộp thành công!");
+    }
+  </script>
 </body>
 </html>
